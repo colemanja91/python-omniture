@@ -87,10 +87,10 @@ class Query(object):
     @immutable
     def set(self, key=None, value=None, **kwargs):
         """
-        `set` is a way to add raw properties to the request, 
-        for features that python-omniture does not support but the 
-        SiteCatalyst API does support. For convenience's sake, 
-        it will serialize Value and Element objects but will 
+        `set` is a way to add raw properties to the request,
+        for features that python-omniture does not support but the
+        SiteCatalyst API does support. For convenience's sake,
+        it will serialize Value and Element objects but will
         leave any other kind of value alone.
         """
 
@@ -116,10 +116,16 @@ class Query(object):
         # It would appear to me that 'segment_id' has a strict subset
         # of the functionality of 'segments', but until I find out for
         # sure, I'll provide both options.
+        # if segments:
+        #     self.raw['segments'] = self._serialize_values(segments, 'segments')
+        # elif segment:
+        #     self.raw['segment_id'] = self._normalize_value(segment, 'segments').id
+        # else:
+        #     raise ValueError()
         if segments:
-            self.raw['segments'] = self._serialize_values(segments, 'segments')
+            self.raw['segments'] = segments
         elif segment:
-            self.raw['segment_id'] = self._normalize_value(segment, 'segments').id
+            self.raw['segment_id'] = segment
         else:
             raise ValueError()
 
@@ -186,7 +192,7 @@ class Query(object):
             time.sleep(interval)
             response = fn()
             status = response['status']
-            
+
             if not soak and status not in ['not ready', 'done', 'ready']:
                 raise reports.InvalidReportError(response)
 

@@ -41,7 +41,7 @@ class Report(object):
         self.period = report['period']
         segment = report['segment_id']
         if len(segment):
-            self.segment = self.query.suite.segments[report['segment_id']]
+            self.segment = segment
         else:
             self.segment = None
 
@@ -77,8 +77,8 @@ class Report(object):
 
     def __repr__(self):
         info = {
-            'metrics': ", ".join(map(str, self.metrics)), 
-            'elements': ", ".join(map(str, self.elements)), 
+            'metrics': ", ".join(map(str, self.metrics)),
+            'elements': ", ".join(map(str, self.elements)),
         }
         return "<omniture.RankedReport (metrics) {metrics} (elements) {elements}>".format(**info)
 
@@ -87,7 +87,7 @@ class OverTimeReport(Report):
         super(OverTimeReport, self).process()
 
         # TODO: this works for over_time reports and I believe for ranked
-        # reports as well, but trended reports have their data in 
+        # reports as well, but trended reports have their data in
         # `data.breakdown:[breakdown:[counts]]`
         for row in self.report['data']:
             for i, value in enumerate(row['counts']):
@@ -122,4 +122,3 @@ class DataWarehouseReport(object):
     pass
 
 DataWarehouseReport.method = 'Request'
-

@@ -23,9 +23,9 @@ class Account(object):
 
     def request(self, api, method, query={}):
         response = requests.post(
-            self.endpoint, 
-            params={'method': api + '.' + method}, 
-            data=json.dumps(query), 
+            self.endpoint,
+            params={'method': api + '.' + method},
+            data=json.dumps(query),
             headers=self._build_token()
             )
         return response.json()
@@ -44,7 +44,7 @@ class Account(object):
         password_64 = binascii.b2a_base64(sha_object.digest())
 
         properties = {
-            "Username": self.username, 
+            "Username": self.username,
             "PasswordDigest": password_64.strip(),
             "Nonce": base64nonce.strip(),
             "Created": created_date,
@@ -97,4 +97,3 @@ class Suite(Value):
     @property
     def report(self):
         return Query(self)
-
