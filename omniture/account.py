@@ -24,8 +24,10 @@ class Account(object):
         suites = [Suite(suite['site_title'], suite['rsid'], self) for suite in data]
         self.suites = utils.AddressableList(suites)
 
-    def request(self, api, method, query={}):
+    def request(self, api, method, query=None):
         """ make Omniture request """
+        if query is None:
+            query = {}
         response = requests.post(
             self.endpoint,
             params={'method': api + '.' + method},
@@ -62,8 +64,10 @@ class Account(object):
 
 class Suite(Value):
     """ Class of available report suites """
-    def request(self, api, method, query={}):
+    def request(self, api, method, query=None):
         """ request against a report suite """
+        if query is None:
+            query = {}
         raw_query = {}
         raw_query.update(query)
         if 'reportDescription' in raw_query:
@@ -73,8 +77,8 @@ class Suite(Value):
 
         return self.account.request(api, method, raw_query)
 
-    def __init__(self, title, id, account):
-        super(Suite, self).__init__(title, id, account)
+    def __init__(self, title, rsid, account):
+        super(Suite, self).__init__(title, rsid, account)
 
         self.account = account
 
