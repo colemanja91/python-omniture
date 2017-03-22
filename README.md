@@ -1,5 +1,8 @@
 # python-omniture
 
+This package was originally developed by debrouwere (https://github.com/debrouwere/python-omniture - can be installed with `pip install omniture`).
+This is a continuation of that work with support for Omniture API 1.4, and Python 3.
+
 `python-omniture` is a wrapper around the Adobe Omniture web analytics API.
 
 It is not meant to be comprehensive. Instead, it provides a high-level interface
@@ -10,15 +13,15 @@ closer to the metal.
 
 Through PyPI:
 
-    pip install omniture
+    pip install omni2re
 
-Latest and greatest: 
+Latest and greatest:
 
-    pip install git+git://github.com/stdbrouw/python-omniture.git
+    pip install git+git://github.com/colemanja91/python-omniture.git
 
 ## Authentication
 
-The most straightforward way to authenticate is with: 
+The most straightforward way to authenticate is with:
 
     import omniture
     account = omniture.authenticate('my_username', 'my_secret')
@@ -54,14 +57,14 @@ human-readable name or their id. So for example `suite.segments['pageviews']` an
 
 `python-omniture` can run ranked, trended and "over time" reports
 
-Here's a quick example: 
+Here's a quick example:
 
     report = network.report \
         .over_time(metrics=['pageviews', 'visitors']) \
         .range('2013-05-01', '2013-05-31', granularity='month') \
         .sync()
 
-Some basic features of the three kinds of reports you can run: 
+Some basic features of the three kinds of reports you can run:
 
 * over_time
   * supports multiple metrics but only one element: time
@@ -95,7 +98,7 @@ In these cases, it can be useful to use the lower-level access this module provi
 
 ### Running multiple reports
 
-If you're interested in automating a large number of reports, you can speed up the 
+If you're interested in automating a large number of reports, you can speed up the
 execution by first queueing all the reports and only _then_ waiting on the results.
 
 Here's an example:
@@ -116,3 +119,6 @@ Here's an example:
         print report.data['pageviews']
 
 `omniture.sync` can queue up (and synchronize) both a list of reports, or a dictionary.
+
+# TODO
+- Unit testing + tox
