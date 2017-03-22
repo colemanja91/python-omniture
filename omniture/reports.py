@@ -6,7 +6,7 @@ from .utils import AddressableDict
 
 class InvalidReportError(Exception):
     def normalize(self, error):
-        print 'error', error
+        print('error', error)
 
         if 'error_msg' in error:
             return {
