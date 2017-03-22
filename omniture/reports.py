@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-from elements import Value, Element, Segment
-import utils
+from .elements import Value, Element, Segment
+from .utils import AddressableDict
 
 
 class InvalidReportError(Exception):
@@ -45,7 +45,7 @@ class Report(object):
         else:
             self.segment = None
 
-        self.data = utils.AddressableDict(self.metrics)
+        self.data = AddressableDict(self.metrics)
         for column in self.data:
             column.value = []
 
