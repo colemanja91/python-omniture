@@ -21,9 +21,9 @@ class Account(object):
         self.username = username
         self.secret = secret
         self.endpoint = endpoint
-        data = self.request('Company', 'GetReportSuites')['report_suites']
-        suites = [Suite(suite['site_title'], suite['rsid'], self) for suite in data]
-        self.suites = AddressableList(suites)
+        #data = self.request('Company', 'GetReportSuites')['report_suites']
+        #suites = [Suite(suite['site_title'], suite['rsid'], self) for suite in data]
+        #self.suites = AddressableList(suites)
 
     def request(self, api, method, query=None):
         """ make Omniture request """
