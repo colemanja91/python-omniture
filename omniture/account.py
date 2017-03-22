@@ -49,13 +49,13 @@ class Account(object):
         nonce = str(time.time())
         base64nonce = binascii.b2a_base64(binascii.a2b_qp(nonce))
         created_date = datetime.utcnow().isoformat() + 'Z'
-        sha_object = sha1(nonce + created_date + self.secret)
+        sha_object = sha1((nonce + created_date + self.secret).encode('utf-8'))
         password_64 = binascii.b2a_base64(sha_object.digest())
 
         properties = {
             "Username": self.username,
-            "PasswordDigest": password_64.strip(),
-            "Nonce": base64nonce.strip(),
+            "PasswordDigest": password_64.strip().decode('ascii'),
+            "Nonce": base64nonce.strip().decode('ascii'),
             "Created": created_date,
         }
         header = 'UsernameToken ' + self._serialize_header(properties)
