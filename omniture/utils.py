@@ -2,20 +2,23 @@ import copy
 import datetime
 from dateutil.parser import parse as parse_date
 
-class memoize:
-  def __init__(self, function):
-    self.function = function
-    self.memoized = {}
 
-  def __call__(self, *args):
-    try:
-      return self.memoized[args]
-    except KeyError:
-      self.memoized[args] = self.function(*args)
-      return self.memoized[args]
+class memoize:
+
+    def __init__(self, function):
+        self.function = function
+        self.memoized = {}
+
+    def __call__(self, *args):
+        try:
+            return self.memoized[args]
+        except KeyError:
+            self.memoized[args] = self.function(*args)
+            return self.memoized[args]
 
 
 class AddressableList(list):
+
     def __init__(self, items, name='items'):
         super(AddressableList, self).__init__(items)
         self.name = name
@@ -24,7 +27,8 @@ class AddressableList(list):
         if isinstance(key, int):
             return super(AddressableList, self).__getitem__(key)
         else:
-            matches = [item for item in self if item.title == key or item.id == key]
+            matches = [item for item in self if item.title ==
+                       key or item.id == key]
             count = len(matches)
             if count > 1:
                 matches = map(repr, matches)
@@ -40,6 +44,7 @@ class AddressableList(list):
 
 
 class AddressableDict(AddressableList):
+
     def __getitem__(self, key):
         item = super(AddressableDict, self).__getitem__(key)
         return item.value
@@ -56,7 +61,8 @@ def date(obj):
     elif isinstance(obj, basestring):
         return parse_date(obj).date()
     else:
-        raise ValueError("Can only convert strings into dates, received {}".format(obj.__class__))
+        raise ValueError(
+            "Can only convert strings into dates, received {}".format(obj.__class__))
 
 
 def wrap(obj):
