@@ -1,3 +1,5 @@
+""" omniture.accounts """
+
 import requests
 import binascii
 import time
@@ -11,6 +13,7 @@ import utils
 # encoding: utf-8
 
 class Account(object):
+    """ Omniture user account """
     DEFAULT_ENDPOINT = 'https://api.omniture.com/admin/1.3/rest/'
 
     def __init__(self, username, secret, endpoint=DEFAULT_ENDPOINT):
@@ -22,6 +25,7 @@ class Account(object):
         self.suites = utils.AddressableList(suites)
 
     def request(self, api, method, query={}):
+        """ make Omniture request """
         response = requests.post(
             self.endpoint,
             params={'method': api + '.' + method},
@@ -31,12 +35,14 @@ class Account(object):
         return response.json()
 
     def _serialize_header(self, properties):
+        """ Prepare header for request """
         header = []
         for key, value in properties.items():
             header.append('{key}="{value}"'.format(key=key, value=value))
         return ', '.join(header)
 
     def _build_token(self):
+        """ build auth token """
         nonce = str(time.time())
         base64nonce = binascii.b2a_base64(binascii.a2b_qp(nonce))
         created_date = datetime.today().isoformat() + 'Z'
@@ -55,7 +61,9 @@ class Account(object):
 
 
 class Suite(Value):
+    """ Class of available report suites """
     def request(self, api, method, query={}):
+        """ request against a report suite """
         raw_query = {}
         raw_query.update(query)
         if 'reportDescription' in raw_query:
@@ -73,27 +81,32 @@ class Suite(Value):
     @property
     @utils.memoize
     def metrics(self):
+        """ return available metrics for report suite """
         data = self.request('ReportSuite', 'GetAvailableMetrics')[0]['available_metrics']
         return Value.list('metrics', data, self, 'display_name', 'metric_name')
 
     @property
     @utils.memoize
     def elements(self):
+        """ return available elements for report suite """
         data = self.request('ReportSuite', 'GetAvailableElements')[0]['available_elements']
         return Element.list('elements', data, self, 'display_name', 'element_name')
 
     @property
     @utils.memoize
     def evars(self):
+        """ return available evars for report suite """
         data = self.request('ReportSuite', 'GetEVars')[0]['evars']
         return Value.list('evars', data, self, 'name', 'evar_num')
 
     @property
     @utils.memoize
     def segments(self):
+        """ return available segments for report suite """
         data = self.request('ReportSuite', 'GetSegments')[0]['sc_segments']
         return Segment.list('segments', data, self, 'name', 'id')
 
     @property
     def report(self):
+        """ return a report for report suite """
         return Query(self)
