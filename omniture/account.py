@@ -2,7 +2,7 @@
 
 import binascii
 import time
-import sha
+from hashlib import sha1
 import json
 from datetime import datetime
 import requests
@@ -49,7 +49,7 @@ class Account(object):
         nonce = str(time.time())
         base64nonce = binascii.b2a_base64(binascii.a2b_qp(nonce))
         created_date = datetime.today().isoformat() + 'Z'
-        sha_object = sha.new(nonce + created_date + self.secret)
+        sha_object = sha1(nonce + created_date + self.secret)
         password_64 = binascii.b2a_base64(sha_object.digest())
 
         properties = {
