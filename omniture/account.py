@@ -1,14 +1,15 @@
 """ omniture.accounts """
 
-import requests
 import binascii
 import time
 import sha
 import json
 from datetime import datetime
-from elements import Value, Element, Segment
-from query import Query
-import utils
+import requests
+
+from .elements import Value, Element, Segment
+from .query import Query
+from .utils import AddressableList, memoize
 
 # encoding: utf-8
 
@@ -22,7 +23,7 @@ class Account(object):
         self.endpoint = endpoint
         data = self.request('Company', 'GetReportSuites')['report_suites']
         suites = [Suite(suite['site_title'], suite['rsid'], self) for suite in data]
-        self.suites = utils.AddressableList(suites)
+        self.suites = AddressableList(suites)
 
     def request(self, api, method, query=None):
         """ make Omniture request """
@@ -83,28 +84,28 @@ class Suite(Value):
         self.account = account
 
     @property
-    @utils.memoize
+    @memoize
     def metrics(self):
         """ return available metrics for report suite """
         data = self.request('ReportSuite', 'GetAvailableMetrics')[0]['available_metrics']
         return Value.list('metrics', data, self, 'display_name', 'metric_name')
 
     @property
-    @utils.memoize
+    @memoize
     def elements(self):
         """ return available elements for report suite """
         data = self.request('ReportSuite', 'GetAvailableElements')[0]['available_elements']
         return Element.list('elements', data, self, 'display_name', 'element_name')
 
     @property
-    @utils.memoize
+    @memoize
     def evars(self):
         """ return available evars for report suite """
         data = self.request('ReportSuite', 'GetEVars')[0]['evars']
         return Value.list('evars', data, self, 'name', 'evar_num')
 
     @property
-    @utils.memoize
+    @memoize
     def segments(self):
         """ return available segments for report suite """
         data = self.request('ReportSuite', 'GetSegments')[0]['sc_segments']
