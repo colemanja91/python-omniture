@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='omni2re',
       description='A wrapper for the Adobe Omniture and SiteCatalyst web analytics API.',
-      long_description=open('README.md').read(),
+      long_description='Please see README.md at http://github.com/colemanja91/python-omniture/',
       author='Stijn Debrouwere, Jeremiah Coleman',
       author_email='stijn@stdout.be, colemanja91@gmail.com',
       url='http://github.com/colemanja91/python-omniture/',
