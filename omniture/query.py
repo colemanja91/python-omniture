@@ -4,9 +4,10 @@ import time
 from copy import copy
 import functools
 from dateutil.relativedelta import relativedelta
-from elements import Value, Element, Segment
-import reports
-import utils
+
+from .elements import Value, Element, Segment
+from .reports import RankedReport, TrendedReport, OverTimeReport, DataWarehouseReport, InvalidReportError
+from .utils import date, translate
 
 
 def immutable(method):
@@ -59,8 +60,8 @@ class Query(object):
 
     @immutable
     def range(self, start, stop=None, months=0, days=0, granularity=None):
-        start = utils.date(start)
-        stop = utils.date(stop)
+        start = date(start)
+        stop = date(stop)
 
         if days or months:
             stop = start + relativedelta(days=days-1, months=months)
@@ -135,7 +136,7 @@ class Query(object):
     def ranked(self, metrics, elements):
         self._serialize_values(metrics, 'metrics')
 
-        self.report = reports.RankedReport
+        self.report = RankedReport
         self.raw['metrics'] = self._serialize_values(metrics, 'metrics')
         self.raw['elements'] = self._serialize_values(elements, 'elements')
         return self
@@ -145,29 +146,29 @@ class Query(object):
         if isinstance(metric, list) or isinstance(element, list):
             raise ValueError("Trended reports can only be generated for one metric and one element.")
 
-        self.report = reports.TrendedReport
+        self.report = TrendedReport
         self.raw['metrics'] = self._serialize_values(metric, 'metrics')
         self.raw['elements'] = self._serialize_values(element, 'elements')
         return self
 
     @immutable
     def over_time(self, metrics):
-        self.report = reports.OverTimeReport
+        self.report = OverTimeReport
         self.raw['metrics'] = self._serialize_values(metrics, 'metrics')
         return self
 
     # TODO: data warehouse reports are a work in progress
     @immutable
     def data(self, metrics, breakdowns):
-        self.report = reports.DataWarehouseReport
+        self.report = DataWarehouseReport
         self.raw['metrics'] = self._serialize_values(metrics, 'metrics')
         # TODO: haven't figured out how breakdowns work yet
         self.raw['breakdowns'] = False
         return self
 
     def build(self):
-        if self.report == reports.DataWarehouseReport:
-            return utils.translate(self.raw, {
+        if self.report == DataWarehouseReport:
+            return translate(self.raw, {
                 'metrics': 'Metric_List',
                 'breakdowns': 'Breakdown_List',
                 'dateFrom': 'Date_From',
@@ -194,7 +195,7 @@ class Query(object):
             status = response['status']
 
             if not soak and status not in ['not ready', 'done', 'ready']:
-                raise reports.InvalidReportError(response)
+                raise InvalidReportError(response)
 
         return response
 
@@ -223,7 +224,7 @@ class Query(object):
         raise NotImplementedError()
 
     def cancel(self):
-        if self.report == reports.DataWarehouseReport:
+        if self.report == DataWarehouseReport:
             return self.suite.request('DataWarehouse', 'CancelRequest', {'Request_Id': self.id})
         else:
             return self.suite.request('Report', 'CancelReport', {'reportID': self.id})
