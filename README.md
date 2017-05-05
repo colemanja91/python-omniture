@@ -23,8 +23,8 @@ Latest and greatest:
 
 The most straightforward way to authenticate is with:
 
-    import omniture
-    account = omniture.authenticate('my_username', 'my_secret')
+    import omni2re
+    account = omni2re.authenticate('my_username', 'my_secret')
 
 However, to avoid hardcoding passwords, instead you can also put your username
 and password in unix environment variables (e.g. in your `.bashrc`):
@@ -35,8 +35,8 @@ and password in unix environment variables (e.g. in your `.bashrc`):
 With your credentials in the environment, you can then log in as follows:
 
     import os
-    import omniture
-    account = omniture.authenticate(os.environ)
+    import omni2re
+    account = omni2re.authenticate(os.environ)
 
 ## Account and suites
 
